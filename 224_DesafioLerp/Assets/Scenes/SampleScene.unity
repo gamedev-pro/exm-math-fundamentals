@@ -149,12 +149,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 298360712}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 596231d08e9d47644bee3afe16c9cbe5, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b7ed528292025b4faa62bf00a442c80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   a: {fileID: 1042768343}
   b: {fileID: 2091534426}
-  t: 0.47
+  moveTime: 1
+  waitTime: 1.5
 --- !u!4 &298360714
 Transform:
   m_ObjectHideFlags: 0
