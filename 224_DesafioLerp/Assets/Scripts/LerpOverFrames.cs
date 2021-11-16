@@ -7,36 +7,39 @@ public class LerpOverFrames : MonoBehaviour
     [SerializeField] private Transform a;
     [SerializeField] private Transform b;
 
-    [SerializeField] private float moveTime = 1;
-    [SerializeField] private float waitTime = 1.5f;
+    [SerializeField] private float moveTime = 2.0f;
 
     private const float pointSize = 0.1f;
 
-    private Vector2 A => a.transform.position;
-    private Vector2 B => b.transform.position;
+    private Vector2 A => a.position;
+    private Vector2 B => b.position;
 
-    Vector2 lerp1;
-    Vector2 lerp2;
+    private Vector2 pos1;
+    private Vector2 pos2;
 
     private void Awake()
     {
-        StartCoroutine(MovePoints());
+        StartCoroutine(MoveFromAToB());
     }
 
-    private IEnumerator MovePoints()
+    private IEnumerator MoveFromAToB()
     {
-        lerp1 = A;
-        lerp2 = A;
-        var speed = 1.0f / moveTime;
+        pos1 = A;
+        pos2 = A;
+
+        yield return new WaitForSeconds(1);
+
+        var speed = 1.0f / moveTime; //v = ds/dt
         var t = 0.0f;
 
-        yield return new WaitForSeconds(waitTime);
         while (true)
         {
+            //Lerp tradicional
             t += Time.deltaTime * speed;
-            t = Mathf.Clamp01(t);
-            lerp1 = MathUtils.LerpUncampled(A, B, t);
-            lerp2 = MathUtils.LerpUncampled(lerp2, B, Time.deltaTime * speed);
+            pos1 = Vector2.Lerp(A, B, t);
+
+            //Lerp recursivo
+            pos2 = Vector2.Lerp(pos2, B, Time.deltaTime * speed);
             yield return null;
         }
     }
@@ -44,18 +47,19 @@ public class LerpOverFrames : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        DrawPoint(A);
-        DrawPoint(B);
+        Gizmos.DrawSphere(A, pointSize);
+        Gizmos.DrawSphere(B, pointSize);
 
         Gizmos.color = Color.green;
-        DrawPoint(lerp1);
+        Gizmos.DrawSphere(pos1, pointSize);
 
         Gizmos.color = Color.red;
-        DrawPoint(lerp2);
-    }
-
-    private void DrawPoint(Vector2 pos)
-    {
-        Gizmos.DrawSphere(pos, pointSize);
+        Gizmos.DrawSphere(pos2, pointSize);
     }
 }
+
+
+
+
+
+
