@@ -158,7 +158,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 465.6, y: -19}
-  m_SizeDelta: {x: 322.306, y: 32.5229}
+  m_SizeDelta: {x: 349.8921, y: 98.0397}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &34367087
 MonoBehaviour:
@@ -187,13 +187,13 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 0
     m_MaxSize: 80
-    m_Alignment: 4
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: v = (0.43, 0.58), LD = False
+  m_Text: "v = (1.58, 1.14)\n  0 1\n  1 0"
 --- !u!222 &34367088
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 165799425}
   - component: {fileID: 165799424}
   m_Layer: 0
-  m_Name: BasisVisualizer
+  m_Name: TransformationVisualizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -232,10 +232,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   infoText: {fileID: 34367087}
-  i: {x: 1, y: 0}
-  j: {x: 0, y: 1}
-  x: 0.43
-  y: 0.58
+  v: {x: 1.14, y: 1.58}
+  matrices:
+  - m00: -1
+    m01: 0
+    m10: 0
+    m11: 1
+  - m00: 0
+    m01: 1
+    m10: -1
+    m11: 0
 --- !u!4 &165799425
 Transform:
   m_ObjectHideFlags: 0
