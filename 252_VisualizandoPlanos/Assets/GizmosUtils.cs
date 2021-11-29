@@ -3,7 +3,7 @@ using UnityEngine;
 public static class GizmosUtils
 {
 
-    private const float defaultThickness = 2.0f;
+    private const float defaultThickness = 8.0f;
 
     public static void DrawRay(Vector3 from, Vector3 direction, float width = defaultThickness)
     {
@@ -60,5 +60,20 @@ public static class GizmosUtils
             DrawRay(pos + direction, right * arrowHeadLength, thickness);
             DrawRay(pos + direction, left * arrowHeadLength, thickness);
         }
+    }
+
+    public static void DrawPlane(in MyPlane plane, Vector2 size)
+    {
+        var prevMatrix = Gizmos.matrix;
+
+        Quaternion rotation = Quaternion.LookRotation(plane.Normal);
+        Matrix4x4 trs = Matrix4x4.TRS(plane.Point, rotation, Vector3.one);
+        Gizmos.matrix = trs;
+        Color32 color = Color.blue;
+        color.a = 125;
+        Gizmos.color = color;
+        Gizmos.DrawCube(Vector3.zero, new Vector3(size.x, size.y, 0.0001f));
+
+        Gizmos.matrix = prevMatrix;
     }
 }
