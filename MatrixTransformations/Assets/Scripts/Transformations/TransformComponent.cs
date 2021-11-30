@@ -9,7 +9,7 @@ public class TransformComponent : MonoBehaviour
     [SerializeField] private Vector3 scale = Vector3.one;
 
     private Matrix4x4 modelMatrix;
-    private Matrix4x4 rotationMatrix;
+    private Quaternion rotationQuaternion;
 
     public Vector3 Position
     {
@@ -41,10 +41,13 @@ public class TransformComponent : MonoBehaviour
         }
     }
 
-    public Vector3 Right => rotationMatrix * Vector3.right;
-
-    public Vector3 Up => rotationMatrix * Vector3.up;
-    public Vector3 Forward => rotationMatrix * Vector3.forward;
+    public Vector3 Up => rotationQuaternion * Vector3.up;
+    public Vector3 Right => rotationQuaternion * Vector3.right;
+    public Vector3 Forward
+    {
+        get => rotationQuaternion * Vector3.forward;
+        set => Rotation = Quaternion.LookRotation(value, Up).eulerAngles;
+    }
 
     public Vector3 TransformPoint(in Vector3 point)
     {
@@ -65,10 +68,8 @@ public class TransformComponent : MonoBehaviour
             new Vector4(0, 0, 0, 1)
         );
 
-        var rotX = RotationMatrixX();
-        var rotY = RotationMatrixY();
-        var rotZ = RotationMatrixZ();
-        rotationMatrix = rotY * rotX * rotZ;
+        rotationQuaternion = Quaternion.Euler(rotation);
+        var rotationMatrix = Matrix4x4.Rotate(rotationQuaternion);
 
         var translationMatrix = new Matrix4x4(
             new Vector4(1, 0, 0, 0),
@@ -78,45 +79,6 @@ public class TransformComponent : MonoBehaviour
         );
 
         modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-    }
-
-    private Matrix4x4 RotationMatrixX()
-    {
-        var sinX = Mathf.Sin(rotation.x * Mathf.Deg2Rad);
-        var cosX = Mathf.Cos(rotation.x * Mathf.Deg2Rad);
-        var rotX = new Matrix4x4(
-            new Vector4(1, 0, 0, 0),
-            new Vector4(0, cosX, sinX, 0),
-            new Vector4(0, -sinX, cosX, 0),
-            new Vector4(0, 0, 0, 1)
-        );
-        return rotX;
-    }
-
-    private Matrix4x4 RotationMatrixY()
-    {
-        var sinY = Mathf.Sin(rotation.y * Mathf.Deg2Rad);
-        var cosY = Mathf.Cos(rotation.y * Mathf.Deg2Rad);
-        var rotY = new Matrix4x4(
-            new Vector4(cosY, 0, -sinY, 0),
-            new Vector4(0, 1, 0, 0),
-            new Vector4(sinY, 0, cosY, 0),
-            new Vector4(0, 0, 0, 1)
-        );
-        return rotY;
-    }
-
-    private Matrix4x4 RotationMatrixZ()
-    {
-        var sinZ = Mathf.Sin(rotation.z * Mathf.Deg2Rad);
-        var cosZ = Mathf.Cos(rotation.z * Mathf.Deg2Rad);
-        var rotZ = new Matrix4x4(
-            new Vector4(cosZ, sinZ, 0, 0),
-            new Vector4(-sinZ, cosZ, 0, 0),
-            new Vector4(0, 0, 1, 0),
-            new Vector4(0, 0, 0, 1)
-        );
-        return rotZ;
     }
 
     private void OnValidate()
