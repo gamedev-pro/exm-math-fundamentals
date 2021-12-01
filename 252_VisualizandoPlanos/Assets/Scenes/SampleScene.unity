@@ -152,11 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e7e12ea15336194fb1cc8e6694ec008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  p1: {x: 0.87, y: 2.26, z: 2.95}
-  p2: {x: 2.42, y: 0.39, z: 0}
-  p3: {x: -0.23, y: 1, z: 0}
-  vec: {x: -0.56, y: 0.67, z: -3.1}
-  operation: 1
+  p1: {x: 0.61, y: 1.77, z: 2.95}
+  p2: {x: 1.77, y: 1.32, z: 0}
+  p3: {x: -1.23, y: 1.73, z: 0}
+  point: {x: 2.73, y: 2.63, z: -0.18}
+  operation: 3
 --- !u!4 &960787942
 Transform:
   m_ObjectHideFlags: 0

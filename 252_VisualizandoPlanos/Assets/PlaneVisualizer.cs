@@ -5,14 +5,14 @@ using UnityEngine;
 
 public enum PlaneOperation
 {
-    None, VectorProjection
+    None, IsInFront, ProjectDirection, ProjectPoint
 }
 
 public class PlaneVisualizer : MonoBehaviour
 {
     [SerializeField] private Vector3 p1, p2, p3;
 
-    [SerializeField] private Vector3 vec;
+    [SerializeField] private Vector3 point;
     [SerializeField] private PlaneOperation operation;
 
     private const float vecThickness = 5;
@@ -21,44 +21,84 @@ public class PlaneVisualizer : MonoBehaviour
     {
         var plane = new MyPlane(p1, p2, p3);
         DrawBase();
-        DrawPlanePoints();
 
-        if (operation == PlaneOperation.VectorProjection)
+        if (plane.IsInFront(point))
         {
-            DrawVectorProjection(plane);
+            DrawPlane(plane);
+            DrawPlaneOperation(plane);
         }
+        else
+        {
+            DrawPlaneOperation(plane);
+            DrawPlane(plane);
+        }
+    }
 
-        DrawPlane(plane);
+    private void DrawPlaneOperation(in MyPlane plane)
+    {
+        switch (operation)
+        {
+            case PlaneOperation.IsInFront:
+                DrawIsInFront(plane);
+                break;
+            case PlaneOperation.ProjectDirection:
+                DrawVectorProjection(plane);
+                break;
+            case PlaneOperation.ProjectPoint:
+                DrawPointProjection(plane);
+                break;
+        }
+    }
+
+    private void DrawIsInFront(in MyPlane plane)
+    {
+        Gizmos.color = plane.IsInFront(point) ? Color.green : Color.red;
+        Gizmos.DrawSphere(point, 0.1f);
     }
 
     private void DrawVectorProjection(in MyPlane plane)
     {
         Gizmos.color = Color.cyan;
-        GizmosUtils.DrawVector(p1, vec, vecThickness);
+        GizmosUtils.DrawVector(p1, point, vecThickness);
 
         Gizmos.color = Color.blue;
-        var projected = plane.ProjectVector(vec);
+        var projected = plane.ProjectVector(point);
         GizmosUtils.DrawVector(p1, projected, vecThickness * 0.5f);
 
-        var projectedNormal = projected - vec;
+        // vp = v - vn -> vn = -(v - vp) => vn = vp - v
+
+        var projectedNormal = -Vector3.Dot(point, plane.Normal) * plane.Normal;
         Gizmos.color = Color.cyan;
-        GizmosUtils.DrawVector(p1 + vec, projectedNormal, 0.1f);
+        GizmosUtils.DrawVector(p1 + point, projectedNormal, 0.1f);
+    }
+
+    private void DrawPointProjection(in MyPlane plane)
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(point, 0.1f);
+
+        Gizmos.color = Color.blue;
+        var projected = plane.ProjectPoint(point);
+        GizmosUtils.DrawVectorAtOrigin(projected, vecThickness * 0.5f);
+        Gizmos.DrawSphere(projected, 0.1f);
+
+        var projectedNormal = projected - point;
+        Gizmos.color = Color.cyan;
+        GizmosUtils.DrawVector(point, projectedNormal, 0.1f);
     }
 
     private void DrawPlane(in MyPlane plane)
     {
         Gizmos.color = Color.white;
-        GizmosUtils.DrawVectorAtOrigin(p1, 0.1f);
+        var distanceVec = plane.Distance * plane.Normal;
+        GizmosUtils.DrawVectorAtOrigin(distanceVec, 0.1f);
 
         var size = Mathf.Max((p2 - p1).magnitude, (p3 - p1).magnitude);
-        GizmosUtils.DrawPlane(plane, Vector2.one * size * 2);
+        GizmosUtils.DrawPlane(plane.Normal, plane.Point, Vector2.one * size * 2);
 
         Gizmos.color = Color.magenta;
         GizmosUtils.DrawVector(p1, plane.Normal, vecThickness);
-    }
 
-    private void DrawPlanePoints()
-    {
         Gizmos.color = Color.black;
         Gizmos.DrawSphere(p1, 0.1f);
         Gizmos.DrawSphere(p2, 0.1f);

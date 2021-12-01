@@ -62,12 +62,12 @@ public static class GizmosUtils
         }
     }
 
-    public static void DrawPlane(in MyPlane plane, Vector2 size)
+    public static void DrawPlane(Vector3 normal, Vector3 point, Vector2 size)
     {
         var prevMatrix = Gizmos.matrix;
 
-        Quaternion rotation = Quaternion.LookRotation(plane.Normal);
-        Matrix4x4 trs = Matrix4x4.TRS(plane.Point, rotation, Vector3.one);
+        Quaternion rotation = Quaternion.LookRotation(normal);
+        Matrix4x4 trs = Matrix4x4.TRS(point, rotation, Vector3.one);
         Gizmos.matrix = trs;
         Color32 color = Color.blue;
         color.a = 125;
