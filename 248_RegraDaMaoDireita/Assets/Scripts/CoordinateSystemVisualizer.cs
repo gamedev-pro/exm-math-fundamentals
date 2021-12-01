@@ -18,23 +18,24 @@ public class CoordinateSystemVisualizer : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        GizmosUtils.DrawVectorAtOrigin(v);
-
+        var vCopy = v;
+        var wCopy = w;
         var n = Vector3.Cross(v, w) * (int)handedness;
-        Gizmos.color = Color.cyan;
-        GizmosUtils.DrawVectorAtOrigin(n);
 
         if (forceOrthogonalSystem)
         {
-            var normalToVAndN = Vector3.Cross(n, v) * (int)handedness;
-            Gizmos.color = Color.red;
-            GizmosUtils.DrawVectorAtOrigin(normalToVAndN);
+            vCopy.Normalize();
+            n.Normalize();
+            wCopy = (Vector3.Cross(n, vCopy) * (int)handedness).normalized;
         }
-        else
-        {
-            Gizmos.color = Color.green;
-            GizmosUtils.DrawVectorAtOrigin(w);
-        }
+
+        Gizmos.color = Color.yellow;
+        GizmosUtils.DrawVectorAtOrigin(vCopy);
+
+        Gizmos.color = Color.cyan;
+        GizmosUtils.DrawVectorAtOrigin(n);
+
+        Gizmos.color = Color.red;
+        GizmosUtils.DrawVectorAtOrigin(wCopy);
     }
 }
