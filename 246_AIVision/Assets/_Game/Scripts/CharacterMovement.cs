@@ -9,9 +9,9 @@ public class CharacterMovement : MonoBehaviour
 
     [Header("Collision")]
     [SerializeField] private Vector3 colliderSize;
-    [SerializeField] private float rayLength = 0.1f;
 
     private Vector3 targetVelocity;
+    private Quaternion targetRotation;
     public Vector3 Velocity { get; private set; }
 
     private RaycastHit[] hits = new RaycastHit[10];
@@ -24,26 +24,31 @@ public class CharacterMovement : MonoBehaviour
     {
         var input = new Vector3(horizontal, 0, vertical);
         targetVelocity = input * moveSpeed;
+        if (horizontal != 0 || vertical != 0)
+        {
+            targetRotation = Quaternion.LookRotation(input);
+        }
     }
 
     private void FixedUpdate()
     {
         Velocity = Vector3.Lerp(Velocity, targetVelocity, Time.deltaTime * acceleration);
-        var targetForward = Vector3.Lerp(transform.forward, Velocity, Time.deltaTime * rotateSpeed);
 
         CheckCollisionHorizontal();
         var targetPos = transform.position + Velocity * Time.deltaTime;
-
         CheckCollisionVertical(ref targetPos);
 
         transform.position = targetPos;
-        transform.forward = targetForward;
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
     }
 
     private void CheckCollisionVertical(ref Vector3 targetPos)
     {
+        const float rayLength = 10.0f;
+
         var hitCount = Physics.RaycastNonAlloc(
-            transform.position + transform.up * colliderSize.y, transform.up * -1,
+            transform.position + transform.up * colliderSize.y,
+            transform.up * -1,
             hits,
             colliderSize.y + rayLength);
 
@@ -57,22 +62,38 @@ public class CharacterMovement : MonoBehaviour
 
     private void CheckCollisionHorizontal()
     {
-        var hitCount = Physics.BoxCastNonAlloc(
+        var rayLength = Velocity.magnitude * Time.fixedDeltaTime;
+
+        const float verticalShrink = 0.6f;
+        var boxExtents = ColliderExtents;
+        boxExtents.y *= verticalShrink;
+
+        const float horizontalIterations = 5;
+        const float boxShrinkXZ = 1.0f / horizontalIterations;
+
+        for (int i = 0; i < horizontalIterations; i++)
+        {
+            var partialBox = boxExtents;
+            partialBox.x *= boxShrinkXZ;
+            partialBox.z *= boxShrinkXZ;
+
+            var hitCount = Physics.BoxCastNonAlloc(
             transform.position + Vector3.up * ColliderExtents.y,
-            colliderSize * 0.3f,
+            partialBox,
             Velocity.normalized,
             hits,
             transform.rotation,
             rayLength);
 
-        for (int i = 0; i < hitCount; i++)
-        {
-            var hit = hits[i];
-            var projectedVelocity = Vector3.ProjectOnPlane(Velocity, hit.normal);
-            if (projectedVelocity != Vector3.zero)
+            for (int j = 0; j < hitCount; j++)
             {
-                Velocity = projectedVelocity.normalized * Velocity.magnitude;
-                break;
+                var hit = hits[j];
+                var projectedVelocity = Vector3.ProjectOnPlane(Velocity, hit.normal);
+                if (projectedVelocity != Vector3.zero)
+                {
+                    Velocity = projectedVelocity.normalized * Velocity.magnitude;
+                    break;
+                }
             }
         }
     }

@@ -595,9 +595,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2
   acceleration: 10
-  rotateSpeed: 15
+  rotateSpeed: 5
   colliderSize: {x: 0.3, y: 0.77, z: 0.3}
-  rayLength: 0.1
 --- !u!4 &527980893
 Transform:
   m_ObjectHideFlags: 0
@@ -1363,9 +1362,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 1
   acceleration: 10
-  rotateSpeed: 15
+  rotateSpeed: 5
   colliderSize: {x: 0.77, y: 0.85, z: 0.7}
-  rayLength: 0.1
 --- !u!4 &1744264217 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4922444305696846, guid: ac1cc01cb5dbf5d4f869c403b38f8a21, type: 3}
