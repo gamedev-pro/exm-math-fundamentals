@@ -9,6 +9,10 @@ public class TransformComponent : MonoBehaviour
     [SerializeField] private Vector3 scale = Vector3.one;
 
     private Matrix4x4 modelMatrix;
+
+    [Space]
+    [Space]
+    [SerializeField]
     private Quaternion rotationQuaternion;
 
     public Vector3 Position
@@ -21,12 +25,13 @@ public class TransformComponent : MonoBehaviour
         }
     }
 
-    public Vector3 Rotation
+    public Quaternion Rotation
     {
-        get => rotation;
+        get => rotationQuaternion;
         set
         {
-            rotation = value;
+            rotationQuaternion = value;
+            rotation = rotationQuaternion.eulerAngles;
             UpdateModelMatrix();
         }
     }
@@ -43,11 +48,7 @@ public class TransformComponent : MonoBehaviour
 
     public Vector3 Up => rotationQuaternion * Vector3.up;
     public Vector3 Right => rotationQuaternion * Vector3.right;
-    public Vector3 Forward
-    {
-        get => rotationQuaternion * Vector3.forward;
-        set => Rotation = Quaternion.LookRotation(value, Up).eulerAngles;
-    }
+    public Vector3 Forward => rotationQuaternion * Vector3.forward;
 
     public Vector3 TransformPoint(in Vector3 point)
     {

@@ -29,7 +29,7 @@ public class CubeController : MonoBehaviour
         transformComponent.Position += frameMovement;
         if (Velocity != Vector3.zero)
         {
-            transformComponent.Forward = Velocity;
+            transformComponent.Rotation = Quaternion.LookRotation(Velocity, transformComponent.Up);
         }
     }
 }
